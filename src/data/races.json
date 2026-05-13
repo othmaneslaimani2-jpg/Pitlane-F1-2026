@@ -1,0 +1,12 @@
+[
+  { "id": "aus", "round": 1, "name": "Australian Grand Prix", "city": "Melbourne", "circuit": "Albert Park Circuit", "continent": "Oceania", "country": "🇦🇺", "date": "2026-03-06T05:00:00Z", "type": "Sprint", "laps": 58, "length": "5.278 km" },
+  { "id": "bhr", "round": 2, "name": "Bahrain Grand Prix", "city": "Sakhir", "circuit": "Bahrain International Circuit", "continent": "Asia", "country": "🇧🇭", "date": "2026-03-20T15:00:00Z", "type": "Standard", "laps": 57, "length": "5.412 km" },
+  { "id": "jpn", "round": 3, "name": "Japanese Grand Prix", "city": "Suzuka", "circuit": "Suzuka International Racing Course", "continent": "Asia", "country": "🇯🇵", "date": "2026-04-12T05:00:00Z", "type": "Standard", "laps": 53, "length": "5.807 km" },
+  { "id": "esp", "round": 4, "name": "Spanish Grand Prix", "city": "Barcelona", "circuit": "Circuit de Barcelona-Catalunya", "continent": "Europe", "country": "🇪🇸", "date": "2026-05-31T13:00:00Z", "type": "Standard", "laps": 66, "length": "4.657 km" },
+  { "id": "mad", "round": 5, "name": "Madrid Grand Prix", "city": "Madrid", "circuit": "Circuito de Madrid", "continent": "Europe", "country": "🇪🇸", "date": "2026-06-14T13:00:00Z", "type": "Sprint", "laps": 52, "length": "5.473 km" },
+  { "id": "gbr", "round": 6, "name": "British Grand Prix", "city": "Silverstone", "circuit": "Silverstone Circuit", "continent": "Europe", "country": "🇬🇧", "date": "2026-07-05T14:00:00Z", "type": "Standard", "laps": 52, "length": "5.891 km" },
+  { "id": "ita", "round": 7, "name": "Italian Grand Prix", "city": "Monza", "circuit": "Autodromo Nazionale Monza", "continent": "Europe", "country": "🇮🇹", "date": "2026-09-06T13:00:00Z", "type": "Standard", "laps": 53, "length": "5.793 km" },
+  { "id": "usa", "round": 8, "name": "United States Grand Prix", "city": "Austin", "circuit": "Circuit of the Americas", "continent": "North America", "country": "🇺🇸", "date": "2026-10-18T19:00:00Z", "type": "Sprint", "laps": 56, "length": "5.513 km" },
+  { "id": "bra", "round": 9, "name": "São Paulo Grand Prix", "city": "São Paulo", "circuit": "Autódromo José Carlos Pace", "continent": "South America", "country": "🇧🇷", "date": "2026-11-08T17:00:00Z", "type": "Sprint", "laps": 71, "length": "4.309 km" },
+  { "id": "adb", "round": 10, "name": "Abu Dhabi Grand Prix", "city": "Abu Dhabi", "circuit": "Yas Marina Circuit", "continent": "Asia", "country": "🇦🇪", "date": "2026-12-06T13:00:00Z", "type": "Standard", "laps": 58, "length": "5.281 km" }
+]
