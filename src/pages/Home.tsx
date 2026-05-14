@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,9 +8,58 @@ import { Link } from 'react-router';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const HERO_VIDEO_URL = 'https://file.garden/agXkpNwhTUPrNmve/videoplayback.webm';
+const SPOTLIGHT_RADIUS = 140; // px — radius of the clear (non-blurred) circle
+
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+  const heroVideoWrapRef = useRef<HTMLDivElement>(null);
+  const sharpLayerRef = useRef<HTMLDivElement>(null);
+  const blurVideoRef = useRef<HTMLVideoElement>(null);
+  const sharpVideoRef = useRef<HTMLVideoElement>(null);
+
+  /* ── Video hover spotlight state ── */
+  const [isHovering, setIsHovering] = useState(false);
+  const mousePos = useRef({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    mousePos.current = { x, y };
+
+    if (sharpLayerRef.current) {
+      sharpLayerRef.current.style.maskImage =
+        `radial-gradient(circle ${SPOTLIGHT_RADIUS}px at ${x}px ${y}px, black 0%, transparent 100%)`;
+      sharpLayerRef.current.style.webkitMaskImage =
+        `radial-gradient(circle ${SPOTLIGHT_RADIUS}px at ${x}px ${y}px, black 0%, transparent 100%)`;
+    }
+  }, []);
+
+  const handleMouseEnter = useCallback(() => setIsHovering(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovering(false), []);
+
+  /* ── Sync the two video elements so the spotlight mask stays seamless ── */
+  useEffect(() => {
+    const blur = blurVideoRef.current;
+    const sharp = sharpVideoRef.current;
+    if (!blur || !sharp) return;
+
+    const syncVideos = () => {
+      if (Math.abs(blur.currentTime - sharp.currentTime) > 0.05) {
+        sharp.currentTime = blur.currentTime;
+      }
+    };
+
+    blur.addEventListener('timeupdate', syncVideos);
+    blur.addEventListener('play', () => { sharp.play().catch(() => {}); });
+    blur.addEventListener('pause', () => { sharp.pause(); });
+
+    return () => {
+      blur.removeEventListener('timeupdate', syncVideos);
+    };
+  }, []);
 
   /* ── Countdown State ── */
   const nextRace = races.find(r => new Date(r.date).getTime() > Date.now()) || races[0];
@@ -113,31 +162,81 @@ export default function Home() {
   return (
     <div ref={containerRef} className="flex flex-col gap-14">
 
-      {/* ══════ HERO ══════ */}
-      <section ref={heroRef} className="relative pt-6 md:pt-12 pb-4">
-        {/* Background decorations */}
-        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full bg-primary/[0.04] blur-[120px] pointer-events-none" />
-        <div className="absolute -bottom-40 -left-20 w-[400px] h-[400px] rounded-full bg-accent/[0.03] blur-[100px] pointer-events-none" />
+      {/* ══════ VIDEO HERO ══════ */}
+      <section ref={heroRef} className="relative -mx-6 md:-mx-10 -mt-6">
+        {/* Video container with spotlight blur effect */}
+        <div
+          ref={heroVideoWrapRef}
+          className="hero-video-wrap relative w-full overflow-hidden rounded-b-2xl"
+          style={{ height: 'clamp(420px, 65vh, 720px)' }}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Layer 1: Blurred video (visible on hover) */}
+          <video
+            ref={blurVideoRef}
+            className="hero-video-blur absolute inset-0 w-full h-full object-cover"
+            src={HERO_VIDEO_URL}
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              filter: isHovering ? 'blur(18px) brightness(0.55)' : 'none',
+              transition: 'filter 0.45s cubic-bezier(0.4,0,0.2,1)',
+              transform: 'scale(1.04)', // prevent blur edge-bleed
+            }}
+          />
 
-        <div className="relative z-10 flex flex-col items-center text-center gap-6 max-w-4xl mx-auto">
-          <div className="hero-badge inline-flex items-center gap-2 bg-white/[0.05] border border-white/[0.08] rounded-full px-4 py-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span className="text-[11px] font-mono text-on-surface-muted tracking-[0.12em] uppercase">
-              2026 regulations — new era
-            </span>
+          {/* Layer 2: Sharp video masked to spotlight (only visible on hover) */}
+          <div
+            ref={sharpLayerRef}
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              opacity: isHovering ? 1 : 0,
+              transition: 'opacity 0.35s ease',
+              maskImage: 'radial-gradient(circle 140px at 50% 50%, black 0%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(circle 140px at 50% 50%, black 0%, transparent 100%)',
+            }}
+          >
+            <video
+              ref={sharpVideoRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              src={HERO_VIDEO_URL}
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{ transform: 'scale(1.04)' }}
+            />
           </div>
 
-          <h1 className="hero-title text-5xl sm:text-6xl md:text-[5rem] lg:text-[6rem] font-black uppercase leading-[0.9] tracking-[-0.03em]">
-            <span className="block text-white">Feel Every</span>
-            <span className="block bg-gradient-to-r from-primary via-primary-soft to-primary bg-clip-text text-transparent">
-              Lap Live
-            </span>
-          </h1>
+          {/* Gradient overlays for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-surface-base via-surface-base/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-surface-base/30 to-transparent pointer-events-none" />
 
-          <p className="hero-sub text-base md:text-lg text-on-surface-muted max-w-xl leading-relaxed">
-            Your premium companion for the most revolutionary season in Formula 1 history.
-            Track every race, build your garage, log your season.
-          </p>
+          {/* Hero content overlay */}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-end text-center pb-12 px-6 pointer-events-none">
+            <div className="hero-badge inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/[0.1] rounded-full px-4 py-1.5 mb-5 pointer-events-auto">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              <span className="text-[11px] font-mono text-white/70 tracking-[0.12em] uppercase">
+                2026 regulations — new era
+              </span>
+            </div>
+
+            <h1 className="hero-title text-5xl sm:text-6xl md:text-[5rem] lg:text-[6rem] font-black uppercase leading-[0.9] tracking-[-0.03em] mb-4">
+              <span className="block text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.6)]">Feel Every</span>
+              <span className="block bg-gradient-to-r from-primary via-primary-soft to-primary bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(225,6,0,0.4)]">
+                Lap Live
+              </span>
+            </h1>
+
+            <p className="hero-sub text-base md:text-lg text-white/70 max-w-xl leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+              Your premium companion for the most revolutionary season in Formula 1 history.
+              Track every race, build your garage, log your season.
+            </p>
+          </div>
         </div>
       </section>
 
