@@ -27,6 +27,18 @@ function Layout({ children }: { children: React.ReactNode }) {
     );
   }, { dependencies: [location.pathname] });
 
+  const isExperience = location.pathname === '/experience';
+
+  if (isExperience) {
+    return (
+      <div className="min-h-screen flex flex-col font-sans bg-[#0a0a0f]">
+        <main ref={containerRef} className="flex-1 w-full h-full relative">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       {/* ── Navbar ── */}
