@@ -16,11 +16,7 @@ export default function HomePage({ onStart, onOpenSettings, onOpenTeams }) {
         <span /><span /><span /><span /><span />
       </div>
 
-      {/* Top-left brand mark */}
-      <div className="home-brand">
-        <img src="/obj/textures/logo.svg" alt="PITLANE Formula 1" className="brand-logo" />
-        <span className="brand-text">PITLANE FORMULA 1</span>
-      </div>
+
 
       {/* Status badge */}
       <div className="home-badge">

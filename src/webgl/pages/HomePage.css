@@ -135,37 +135,13 @@
   100% { transform: translateX(280%); opacity: 0; }
 }
 
-/* ============================================================
-   Brand mark (top-left) + status badge
-============================================================ */
-.home-brand {
-  position: absolute;
-  top: 28px;
-  left: 32px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.7rem;
-  letter-spacing: 3px;
-  color: var(--hp-muted);
-  font-weight: 500;
-}
-.brand-logo {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(239, 47, 60, 0.45));
-}
-.brand-text {
-  font-family: 'Orbitron', monospace;
-  color: rgba(255,255,255,0.85);
-  font-weight: 600;
-}
+
 
 .home-badge {
   position: absolute;
   top: 32px;
-  right: 32px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   gap: 10px;
