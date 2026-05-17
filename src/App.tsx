@@ -36,7 +36,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <div className="max-w-[1400px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <img src="/obj/textures/logo.svg" alt="Pitlane Logo" className="h-6 object-contain drop-shadow-[0_0_10px_rgba(225,6,0,0.3)] group-hover:drop-shadow-[0_0_15px_rgba(225,6,0,0.5)] transition-all" />
+            <img src="/modern-flag-p-letter-logo-f69c3ca7-eb30-40f8-806d-45fbb183d56e.png" alt="Pitlane Logo" className="h-8 object-contain drop-shadow-[0_0_10px_rgba(225,6,0,0.3)] group-hover:drop-shadow-[0_0_15px_rgba(225,6,0,0.5)] transition-all" />
             <div className="flex flex-col leading-none">
               <span className="text-[15px] font-black tracking-tight text-white uppercase">Pitlane</span>
               <span className="text-[10px] font-mono text-on-surface-muted tracking-[0.15em]">FORMULA 1</span>
