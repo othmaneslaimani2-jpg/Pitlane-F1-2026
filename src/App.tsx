@@ -5,8 +5,9 @@ import Calendar from './pages/Calendar';
 import RaceDetail from './pages/RaceDetail';
 import MyGarage from './pages/MyGarage';
 import MySeason from './pages/MySeason';
+import Experience from './pages/Experience';
 import { UserDataProvider } from './context/UserDataContext';
-import { Gauge, CalendarDays, Bookmark, Clock } from 'lucide-react';
+import { Gauge, CalendarDays, Bookmark, Clock, Gamepad2 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 
@@ -29,13 +30,11 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col font-sans">
       {/* ── Navbar ── */}
-      <nav className="glass-panel sticky top-0 z-50 border-b border-white/[0.04]">
+      <nav className="glass-panel sticky top-0 z-50 border-b border-white/4">
         <div className="max-w-[1400px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center shadow-[0_0_20px_rgba(225,6,0,0.3)] group-hover:shadow-[0_0_30px_rgba(225,6,0,0.5)] transition-shadow">
-              <span className="text-white font-black text-sm tracking-tight">P</span>
-            </div>
+            <img src="/modern-flag-p-letter-logo-f69c3ca7-eb30-40f8-806d-45fbb183d56e.png" alt="Pitlane Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(225,6,0,0.3)] group-hover:drop-shadow-[0_0_15px_rgba(225,6,0,0.5)] transition-all" />
             <div className="flex flex-col leading-none">
               <span className="text-[15px] font-black tracking-tight text-white uppercase">Pitlane</span>
               <span className="text-[10px] font-mono text-on-surface-muted tracking-[0.15em]">2026 SEASON</span>
@@ -45,6 +44,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           {/* Nav Links */}
           <div className="flex items-center gap-1">
             <NavLink to="/" icon={<Gauge size={16} />} text="Paddock" />
+            <NavLink to="/experience" icon={<Gamepad2 size={16} />} text="Experience" />
             <NavLink to="/calendrier" icon={<CalendarDays size={16} />} text="Grid" />
             <NavLink to="/mongarage" icon={<Bookmark size={16} />} text="Garage" />
             <NavLink to="/masaison" icon={<Clock size={16} />} text="Season" />
@@ -60,7 +60,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-white/[0.04] mt-auto">
+      <footer className="border-t border-white/4 mt-auto">
         <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
           <span className="text-xs font-mono text-on-surface-muted tracking-wider">
             PITLANE © 2026 — F1 FAN COMPANION
@@ -91,8 +91,8 @@ function NavLink({ to, icon, text }: { to: string; icon: React.ReactNode; text: 
         relative flex items-center gap-2 px-3.5 py-2 rounded-md text-[13px] font-semibold tracking-wide uppercase
         transition-all duration-200
         ${isActive
-          ? 'text-white bg-white/[0.08]'
-          : 'text-on-surface-muted hover:text-white hover:bg-white/[0.04]'
+          ? 'text-white bg-white/8'
+          : 'text-on-surface-muted hover:text-white hover:bg-white/4'
         }
       `}
     >
@@ -105,15 +105,15 @@ function NavLink({ to, icon, text }: { to: string; icon: React.ReactNode; text: 
   );
 }
 
+/* ─── Scroll To Top Component ─── */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 /* ─── App Root ─── */
 export default function App() {
-  // Scroll to top on route change
-  function ScrollToTop() {
-    const { pathname } = useLocation();
-    useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
-    return null;
-  }
-
   return (
     <BrowserRouter>
       <UserDataProvider>
@@ -121,6 +121,7 @@ export default function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/experience" element={<Experience />} />
             <Route path="/calendrier" element={<Calendar />} />
             <Route path="/calendrier/:raceId" element={<RaceDetail />} />
             <Route path="/mongarage" element={<MyGarage />} />

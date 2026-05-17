@@ -1,0 +1,482 @@
+/* ============================================================
+   Game page — modern racing HUD
+============================================================ */
+:root {
+  --g-accent: #ef2f3c;
+  --g-throttle: #22c55e;
+  --g-brake: #ff7a00;
+  --g-faint: rgba(255,255,255,0.1);
+  --g-card: rgba(15,15,22,0.65);
+}
+
+.game-page {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.game-canvas-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.game-canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ============================================================
+   TOP BAR — Menu + mute
+============================================================ */
+.g-topbar {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 200;
+  pointer-events: none;
+}
+.g-topbar > * { pointer-events: auto; }
+
+.g-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: all 0.2s;
+}
+.g-back-btn:hover {
+  background: #fff;
+  color: var(--g-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.g-mute-row { display: flex; gap: 10px; }
+
+.g-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+.g-icon-btn:hover { transform: translateY(-1px); }
+.g-icon-btn.is-off { opacity: 0.6; }
+
+/* ============================================================
+   CAMERA RAIL (right side)
+============================================================ */
+.g-camera-rail {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 14px 12px;
+  background: var(--g-card);
+  border: 1px solid var(--g-faint);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  z-index: 200;
+  min-width: 180px;
+}
+.g-rail-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--g-faint);
+}
+.g-rail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+.g-rail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  text-align: left;
+  transition: all 0.2s;
+}
+.g-rail-item:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+.g-rail-item.is-active {
+  background: rgba(239,47,60,0.15);
+  border-color: rgba(239,47,60,0.4);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(239,47,60,0.18) inset;
+}
+.g-rail-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  min-width: 24px;
+}
+.g-rail-item.is-active .g-rail-num {
+  color: var(--g-accent);
+}
+.g-rail-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.g-rail-hint {
+  text-align: center;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding-top: 6px;
+  border-top: 1px solid var(--g-faint);
+}
+.g-rail-hint kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--g-faint);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  font-family: 'Orbitron', monospace;
+  margin-right: 4px;
+  font-size: 0.6rem;
+}
+
+/* ============================================================
+   SPEEDOMETER (bottom-left)
+============================================================ */
+.g-speedo {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  min-width: 360px;
+  padding: 18px 22px;
+  background: var(--g-card);
+  border: 1px solid var(--g-faint);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  z-index: 200;
+}
+.g-speedo-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.g-speedo-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 3.2rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  background: linear-gradient(180deg, #fff 0%, #cbcbd6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(255,255,255,0.06);
+  line-height: 1;
+}
+.g-speedo-unit {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+}
+
+.g-speedo-bar {
+  position: relative;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+.g-speedo-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #22c55e 0%, #facc15 55%, var(--g-accent) 100%);
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.15s linear;
+  box-shadow: 0 0 18px rgba(239,47,60,0.5);
+}
+.g-speedo-ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.g-speedo-ticks span {
+  width: 1px;
+  height: 100%;
+  background: rgba(0,0,0,0.25);
+}
+.g-speedo-ticks span:first-child,
+.g-speedo-ticks span:last-child { background: transparent; }
+
+.g-speedo-foot {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   INPUT KEYPAD (bottom-right)
+============================================================ */
+.g-inputs {
+  position: absolute;
+  right: 220px; /* leaves room for the camera rail */
+  bottom: 24px;
+  width: 200px;
+  padding: 14px 16px;
+  background: var(--g-card);
+  border: 1px solid var(--g-faint);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  z-index: 200;
+}
+.g-inputs-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.g-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 30px 30px auto;
+  grid-template-areas:
+    ". up ."
+    "left down right"
+    "space space space";
+  gap: 4px;
+}
+.g-key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--g-faint);
+  border-radius: 5px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.1s;
+}
+.g-key.is-active {
+  background: rgba(239,47,60,0.25);
+  border-color: var(--g-accent);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(239,47,60,0.5);
+}
+.g-key-up { grid-area: up; }
+.g-key-down { grid-area: down; }
+.g-key-left { grid-area: left; }
+.g-key-right { grid-area: right; }
+.g-key-space {
+  grid-area: space;
+  font-size: 0.6rem;
+  letter-spacing: 2.5px;
+  height: 26px;
+  margin-top: 4px;
+}
+.g-key-space.is-active {
+  background: rgba(255,122,0,0.25);
+  border-color: var(--g-brake);
+  box-shadow: 0 0 16px rgba(255,122,0,0.5);
+}
+
+/* ============================================================
+   PEDAL BARS (bottom-center)
+============================================================ */
+.g-pedals {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  padding: 14px 22px;
+  background: var(--g-card);
+  border: 1px solid var(--g-faint);
+  border-radius: 14px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  z-index: 200;
+}
+.g-pedal {
+  min-width: 130px;
+}
+.g-pedal-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.g-pedal-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.g-pedal-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.08s linear;
+}
+.g-pedal-throttle {
+  background: linear-gradient(90deg, var(--g-throttle), #4ade80);
+  box-shadow: 0 0 14px rgba(34,197,94,0.5);
+}
+.g-pedal-brake {
+  background: linear-gradient(90deg, var(--g-brake), #ff4d4d);
+  box-shadow: 0 0 14px rgba(255,122,0,0.5);
+}
+
+/* ============================================================
+   STATUS PILL (when stopped)
+============================================================ */
+.g-status-pill {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(15,15,22,0.7);
+  border: 1px solid var(--g-faint);
+  border-radius: 999px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.7);
+  backdrop-filter: blur(10px);
+  z-index: 200;
+}
+.g-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #facc15;
+  box-shadow: 0 0 10px #facc15;
+  animation: g-status-blink 1.5s infinite;
+}
+@keyframes g-status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ============================================================
+   Responsive
+============================================================ */
+@media (max-width: 900px) {
+  .g-camera-rail { display: none; }
+  .g-inputs { right: 18px; }
+  .g-pedals { display: none; }
+}
+@media (max-width: 600px) {
+  .g-speedo { min-width: unset; left: 12px; right: 12px; }
+  .g-inputs { display: none; }
+}
+
+/* ============================================================
+   Team pill in the game HUD top bar
+============================================================ */
+.g-team-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px 6px 8px;
+  background: rgba(15,15,22,0.75);
+  border: 1px solid var(--team-color, rgba(255,255,255,0.1));
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 0 18px var(--team-color, transparent);
+}
+.g-team-pill-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.g-team-pill-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+}

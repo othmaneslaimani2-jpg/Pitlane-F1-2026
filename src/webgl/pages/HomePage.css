@@ -1,0 +1,542 @@
+/* ============================================================
+   HOME PAGE — modern racing UI
+   Tokens
+============================================================ */
+:root {
+  --hp-bg: #07070d;
+  --hp-fg: #ffffff;
+  --hp-muted: rgba(255,255,255,0.5);
+  --hp-faint: rgba(255,255,255,0.12);
+  --hp-accent: #ef2f3c;       /* primary red */
+  --hp-accent-2: #ff7a00;     /* secondary amber */
+  --hp-accent-cool: #4cc9f0;  /* cool blue */
+  --hp-card-bg: rgba(20,20,28,0.55);
+  --hp-card-border: rgba(255,255,255,0.08);
+}
+
+/* ============================================================
+   Page container + animated background
+============================================================ */
+.home-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 60px 24px;
+  background: radial-gradient(ellipse at 50% 0%, #1a1a26 0%, var(--hp-bg) 55%);
+  color: var(--hp-fg);
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Subtle grid overlay */
+.home-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 30%, transparent 80%);
+  z-index: -2;
+}
+
+/* Vignette */
+.home-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, transparent 30%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Floating colored orbs (animated) */
+.home-bg-orbs {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.orb-1 {
+  top: -10%;
+  left: -8%;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, var(--hp-accent), transparent 70%);
+  animation: orbDrift1 18s ease-in-out infinite;
+}
+.orb-2 {
+  bottom: -15%;
+  right: -10%;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, var(--hp-accent-2), transparent 70%);
+  animation: orbDrift2 22s ease-in-out infinite;
+  opacity: 0.4;
+}
+.orb-3 {
+  top: 35%;
+  right: 20%;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, var(--hp-accent-cool), transparent 70%);
+  animation: orbDrift3 26s ease-in-out infinite;
+  opacity: 0.25;
+}
+@keyframes orbDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 60px) scale(1.1); }
+}
+@keyframes orbDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, -40px) scale(0.95); }
+}
+@keyframes orbDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-30px, 40px) scale(1.08); }
+}
+
+/* Decorative racing speed lines */
+.home-bg-lines {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.home-bg-lines span {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: lineSweep 8s linear infinite;
+}
+.home-bg-lines span:nth-child(1) { top: 18%; left: -50%; width: 60%; animation-delay: 0s; }
+.home-bg-lines span:nth-child(2) { top: 32%; left: -50%; width: 40%; animation-delay: 1.5s; }
+.home-bg-lines span:nth-child(3) { top: 65%; left: -50%; width: 55%; animation-delay: 3s; }
+.home-bg-lines span:nth-child(4) { top: 78%; left: -50%; width: 35%; animation-delay: 4.5s; }
+.home-bg-lines span:nth-child(5) { top: 88%; left: -50%; width: 50%; animation-delay: 6s; }
+@keyframes lineSweep {
+  0%   { transform: translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(280%); opacity: 0; }
+}
+
+/* ============================================================
+   Brand mark (top-left) + status badge
+============================================================ */
+.home-brand {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  color: var(--hp-muted);
+  font-weight: 500;
+}
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(239, 47, 60, 0.45));
+}
+.brand-text {
+  font-family: 'Orbitron', monospace;
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+}
+
+.home-badge {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--hp-faint);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--hp-muted);
+  background: rgba(15,15,22,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.home-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: home-pulse 2s infinite;
+}
+@keyframes home-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e; }
+  50% { opacity: 0.5; box-shadow: 0 0 14px #22c55e; }
+}
+.home-badge-sep {
+  width: 1px;
+  height: 10px;
+  background: var(--hp-faint);
+}
+
+/* ============================================================
+   Title block
+============================================================ */
+.home-title-wrap {
+  text-align: center;
+  margin-top: 8px;
+}
+.title-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--hp-accent);
+  background: rgba(239,47,60,0.1);
+  border: 1px solid rgba(239,47,60,0.3);
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+
+.home-title {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: clamp(3.2rem, 9vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: -2px;
+  margin-bottom: 14px;
+}
+.title-row {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(180deg, #ffffff 0%, #c9c9d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.title-row-accent {
+  background: linear-gradient(135deg, #ff5b6a 0%, var(--hp-accent) 40%, #b80f1e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow:
+    0 0 30px rgba(239,47,60,0.4),
+    0 0 80px rgba(239,47,60,0.15);
+  animation: accentPulse 3s ease-in-out infinite;
+}
+@keyframes accentPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+}
+
+.home-subtitle {
+  font-size: 0.95rem;
+  color: var(--hp-muted);
+  margin-top: 12px;
+  font-weight: 300;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+.home-subtitle::before,
+.home-subtitle::after {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: var(--hp-faint);
+  vertical-align: middle;
+  margin: 0 14px;
+}
+
+/* ============================================================
+   Stat cards
+============================================================ */
+.home-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stat-card {
+  min-width: 110px;
+  padding: 14px 22px;
+  background: var(--hp-card-bg);
+  border: 1px solid var(--hp-card-border);
+  border-radius: 10px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s, border-color 0.3s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(239,47,60,0.4);
+}
+.stat-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #aaaaaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label {
+  font-size: 0.6rem;
+  color: var(--hp-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   Action buttons
+============================================================ */
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 44px;
+}
+
+/* Primary "Start Driving" button */
+.btn-drive {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 56px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #fff;
+  background:
+    linear-gradient(135deg, #ff3848 0%, #b80f1e 100%);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow:
+    0 6px 22px rgba(239,47,60,0.45),
+    0 0 0 1px rgba(255,255,255,0.08) inset,
+    0 1px 0 rgba(255,255,255,0.18) inset;
+}
+.btn-drive:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 38px rgba(239,47,60,0.6),
+    0 0 0 1px rgba(255,255,255,0.12) inset,
+    0 1px 0 rgba(255,255,255,0.25) inset;
+}
+.btn-drive:active { transform: translateY(0); }
+
+/* Animated highlight glow */
+.btn-drive-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: btnSheen 3s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes btnSheen {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.btn-drive-text { position: relative; z-index: 1; }
+.btn-drive-arrow {
+  font-size: 1.2rem;
+  font-weight: 400;
+  transition: transform 0.25s;
+}
+.btn-drive:hover .btn-drive-arrow { transform: translateX(4px); }
+
+/* Secondary "Configure Controls" button */
+.btn-settings {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--hp-faint);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s;
+  backdrop-filter: blur(6px);
+}
+.btn-settings:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-1px);
+}
+.btn-settings-icon {
+  font-size: 1rem;
+  display: inline-block;
+  transition: transform 0.6s;
+}
+.btn-settings:hover .btn-settings-icon { transform: rotate(90deg); }
+
+/* ============================================================
+   Footer key hints
+============================================================ */
+.home-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  font-size: 0.65rem;
+  color: var(--hp-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.footer-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-key kbd {
+  display: inline-block;
+  padding: 4px 10px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hp-faint);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+/* ============================================================
+   Responsive
+============================================================ */
+@media (max-width: 700px) {
+  .home-brand,
+  .home-badge { display: none; }
+  .home-stats { gap: 8px; }
+  .stat-card { min-width: 90px; padding: 10px 14px; }
+  .home-footer {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+  }
+  .btn-drive { padding: 16px 36px; letter-spacing: 3px; }
+}
+
+/* ============================================================
+   Action row + team button + team summary card
+============================================================ */
+.home-actions-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  background: linear-gradient(135deg, rgba(76,201,240,0.15), rgba(76,201,240,0.05));
+  border: 1px solid rgba(76,201,240,0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s;
+  backdrop-filter: blur(6px);
+}
+.btn-team:hover {
+  color: #fff;
+  border-color: rgba(76,201,240,0.7);
+  background: linear-gradient(135deg, rgba(76,201,240,0.25), rgba(76,201,240,0.1));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(76,201,240,0.3);
+}
+.btn-team-icon {
+  font-size: 1rem;
+}
+
+/* ---- Team summary ---- */
+.home-team-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px;
+  margin-top: 24px;
+  background: rgba(20,20,30,0.6);
+  border: 1px solid var(--team-color, rgba(255,255,255,0.1));
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 24px var(--team-color, transparent);
+}
+.home-team-summary-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.home-team-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-team-summary-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--team-color, rgba(255,255,255,0.5));
+}
+.home-team-summary-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 1px;
+}

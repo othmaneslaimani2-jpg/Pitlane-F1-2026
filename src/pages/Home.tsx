@@ -3,12 +3,12 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.json';
-import { ArrowRight, Zap, Users, Fuel, Flag } from 'lucide-react';
+import { ArrowRight, Zap, Users, Fuel, Flag, Volume2, VolumeX } from 'lucide-react';
 import { Link } from 'react-router';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HERO_VIDEO_URL = 'https://file.garden/agXkpNwhTUPrNmve/videoplayback.webm';
+const HERO_VIDEO_URL = 'https://file.garden/aC_DHjCefTOrIs4s/pitlane.webm';
 const SPOTLIGHT_RADIUS = 140; // px — radius of the clear (non-blurred) circle
 
 export default function Home() {
@@ -21,6 +21,8 @@ export default function Home() {
 
   /* ── Video hover spotlight state ── */
   const [isHovering, setIsHovering] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(1);
   const mousePos = useRef({ x: 0, y: 0 });
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -61,8 +63,15 @@ export default function Home() {
     };
   }, []);
 
+  /* ── Video Volume Control ── */
+  useEffect(() => {
+    if (blurVideoRef.current) blurVideoRef.current.volume = volume;
+    if (sharpVideoRef.current) sharpVideoRef.current.volume = volume;
+  }, [volume]);
+
   /* ── Countdown State ── */
-  const nextRace = races.find(r => new Date(r.date).getTime() > Date.now()) || races[0];
+  const [now] = useState(() => Date.now());
+  const nextRace = races.find(r => new Date(r.date).getTime() > now) || races[0];
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
@@ -156,7 +165,7 @@ export default function Home() {
 
   /* ── Upcoming Races (next 4) ── */
   const upcoming = races
-    .filter(r => new Date(r.date).getTime() > Date.now())
+    .filter(r => new Date(r.date).getTime() > now)
     .slice(0, 4);
 
   return (
@@ -180,7 +189,7 @@ export default function Home() {
             src={HERO_VIDEO_URL}
             autoPlay
             loop
-            muted
+            muted={isMuted}
             playsInline
             style={{
               filter: isHovering ? 'blur(18px) brightness(0.55)' : 'none',
@@ -206,19 +215,51 @@ export default function Home() {
               src={HERO_VIDEO_URL}
               autoPlay
               loop
-              muted
+              muted={isMuted}
               playsInline
               style={{ transform: 'scale(1.04)' }}
             />
           </div>
 
           {/* Gradient overlays for readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-surface-base via-surface-base/40 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface-base/30 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-surface-base via-surface-base/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-r from-surface-base/30 to-transparent pointer-events-none" />
+
+          {/* Audio Controls */}
+          <div className="absolute bottom-6 right-6 z-20 flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-2 pointer-events-auto group">
+            {/* Mute button */}
+            <button
+              onClick={() => setIsMuted(m => !m)}
+              className="text-white/70 hover:text-white transition-colors cursor-pointer"
+              aria-label={isMuted ? 'Unmute video' : 'Mute video'}
+            >
+              {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            </button>
+            {/* Volume slider */}
+            <div className="w-24 transition-all duration-300 ease-in-out flex items-center">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={isMuted ? 0 : volume}
+                onChange={(e) => {
+                  const newVol = parseFloat(e.target.value);
+                  setVolume(newVol);
+                  if (newVol > 0 && isMuted) setIsMuted(false);
+                  if (newVol === 0 && !isMuted) setIsMuted(true);
+                }}
+                className="w-24 h-1.5 rounded-full appearance-none bg-white/20 outline-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
+                style={{
+                  background: `linear-gradient(to right, white ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) ${(isMuted ? 0 : volume) * 100}%)`
+                }}
+              />
+            </div>
+          </div>
 
           {/* Hero content overlay */}
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-end text-center pb-12 px-6 pointer-events-none">
-            <div className="hero-badge inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/[0.1] rounded-full px-4 py-1.5 mb-5 pointer-events-auto">
+            <div className="hero-badge inline-flex items-center gap-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full px-4 py-1.5 mb-5 pointer-events-auto">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               <span className="text-[11px] font-mono text-white/70 tracking-[0.12em] uppercase">
                 2026 regulations — new era
@@ -227,7 +268,7 @@ export default function Home() {
 
             <h1 className="hero-title text-5xl sm:text-6xl md:text-[5rem] lg:text-[6rem] font-black uppercase leading-[0.9] tracking-[-0.03em] mb-4">
               <span className="block text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.6)]">Feel Every</span>
-              <span className="block bg-gradient-to-r from-primary via-primary-soft to-primary bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(225,6,0,0.4)]">
+              <span className="block bg-linear-to-r from-primary via-primary-soft to-primary bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(225,6,0,0.4)]">
                 Lap Live
               </span>
             </h1>
@@ -244,12 +285,12 @@ export default function Home() {
       <section className="countdown-card">
         <div className="glass-panel rounded-xl overflow-hidden">
           {/* Scan line accent */}
-          <div className="h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-40" />
+          <div className="h-[2px] bg-linear-to-r from-transparent via-primary to-transparent opacity-40" />
 
           <div className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Left: Race info */}
             <div className="flex items-center gap-5">
-              <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex flex-col items-center justify-center">
+              <div className="shrink-0 w-14 h-14 rounded-lg bg-primary/10 border border-primary/20 flex flex-col items-center justify-center">
                 <span className="text-xl">{nextRace.country}</span>
               </div>
               <div>
@@ -308,7 +349,7 @@ export default function Home() {
               className="race-row group glass-panel-solid rounded-lg px-5 py-4 flex items-center gap-5 card-glow cursor-pointer"
             >
               {/* Round badge */}
-              <div className="flex-shrink-0 w-10 h-10 rounded-md bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
+              <div className="shrink-0 w-10 h-10 rounded-md bg-white/4 border border-white/6 flex items-center justify-center">
                 <span className="text-xs font-mono font-bold text-on-surface-muted">
                   R{race.round.toString().padStart(2, '0')}
                 </span>
@@ -316,7 +357,7 @@ export default function Home() {
 
               {/* Flag + name */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <span className="text-2xl flex-shrink-0">{race.country}</span>
+                <span className="text-2xl shrink-0">{race.country}</span>
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">
                     {race.name}
@@ -331,14 +372,14 @@ export default function Home() {
               </span>
 
               {/* Date */}
-              <div className="hidden md:block text-right flex-shrink-0 w-28">
+              <div className="hidden md:block text-right shrink-0 w-28">
                 <p className="text-xs font-mono text-on-surface-muted">
                   {new Date(race.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
                 </p>
               </div>
 
               {/* Arrow */}
-              <ArrowRight size={16} className="text-on-surface-muted/40 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+              <ArrowRight size={16} className="text-on-surface-muted/40 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
             </Link>
           ))}
         </div>
@@ -355,7 +396,7 @@ function CountdownUnit({ value, label, highlight }: { value: number; label: stri
         min-w-[56px] md:min-w-[68px] py-2.5 rounded-lg text-center font-mono text-2xl md:text-3xl font-bold
         ${highlight
           ? 'bg-primary/10 text-primary border border-primary/20'
-          : 'bg-white/[0.04] text-white border border-white/[0.06]'
+          : 'bg-white/4 text-white border border-white/6'
         }
       `}>
         {value.toString().padStart(2, '0')}
@@ -373,7 +414,7 @@ function Separator() {
 /* ─── Stat Card ─── */
 function StatCard({ icon, value, label, accent }: { icon: React.ReactNode; value: string; label: string; accent?: boolean }) {
   return (
-    <div className="stat-card glass-panel-solid rounded-lg p-4 md:p-5 flex flex-col gap-3 border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+    <div className="stat-card glass-panel-solid rounded-lg p-4 md:p-5 flex flex-col gap-3 border border-white/4 hover:border-white/8 transition-colors">
       <div className={`w-8 h-8 rounded-md flex items-center justify-center ${accent ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'}`}>
         {icon}
       </div>

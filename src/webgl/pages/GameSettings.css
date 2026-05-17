@@ -1,0 +1,194 @@
+/* ============================================================
+   In-game audio settings modal
+============================================================ */
+.gs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: gs-fade 0.2s ease-out;
+}
+@keyframes gs-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gs-card {
+  width: 440px;
+  max-width: calc(100vw - 32px);
+  padding: 30px 36px;
+  background: linear-gradient(180deg, rgba(20,20,28,0.95) 0%, rgba(12,12,18,0.95) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  color: #fff;
+  animation: gs-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes gs-rise {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.gs-header { text-align: center; margin-bottom: 24px; }
+.gs-header h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #fff, #ef2f3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gs-subtitle {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ---- Slider rows ---- */
+.gs-row {
+  margin: 14px 0;
+}
+.gs-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.gs-row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+.gs-row-icon { font-size: 1rem; }
+.gs-row-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ef2f3c;
+  letter-spacing: 1px;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* Range slider styling — works on Chromium/Firefox/Safari */
+.gs-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.gs-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ef2f3c;
+  border: 2px solid #fff;
+  box-shadow: 0 0 12px rgba(239,47,60,0.6);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.gs-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.gs-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ef2f3c;
+  border: 2px solid #fff;
+  box-shadow: 0 0 12px rgba(239,47,60,0.6);
+  cursor: pointer;
+  border: none;
+}
+
+.gs-slider-engine {
+  background: linear-gradient(90deg, rgba(239,47,60,0.6), rgba(239,47,60,0.1));
+}
+.gs-slider-crowd {
+  background: linear-gradient(90deg, rgba(76,201,240,0.6), rgba(76,201,240,0.1));
+}
+.gs-slider-crowd::-webkit-slider-thumb {
+  background: #4cc9f0;
+  box-shadow: 0 0 12px rgba(76,201,240,0.6);
+}
+.gs-slider-crowd::-moz-range-thumb {
+  background: #4cc9f0;
+}
+
+/* ---- Mute toggle ---- */
+.gs-mute-row {
+  margin-top: 24px;
+  text-align: center;
+}
+.gs-mute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.gs-mute-btn:hover {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.07);
+}
+.gs-mute-btn.is-muted {
+  background: rgba(239,47,60,0.15);
+  border-color: rgba(239,47,60,0.5);
+  color: #fff;
+}
+
+/* ---- Done button ---- */
+.gs-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+.gs-done-btn {
+  padding: 12px 36px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #ff3848, #b80f1e);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(239,47,60,0.4);
+}
+.gs-done-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(239,47,60,0.6);
+}
