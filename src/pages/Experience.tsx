@@ -1,3 +1,4 @@
+// @ts-ignore
 import WebGLApp from '../webgl/App.jsx';
 
 export default function Experience() {
