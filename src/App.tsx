@@ -29,27 +29,17 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   const isExperience = location.pathname === '/experience';
 
-  if (isExperience) {
-    return (
-      <div className="min-h-screen flex flex-col font-sans bg-[#0a0a0f]">
-        <main ref={containerRef} className="flex-1 w-full h-full relative">
-          {children}
-        </main>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className={`min-h-screen flex flex-col font-sans ${isExperience ? 'bg-[#0a0a0f]' : ''}`}>
       {/* ── Navbar ── */}
       <nav className="glass-panel sticky top-0 z-50 border-b border-white/4">
         <div className="max-w-[1400px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <img src="/modern-flag-p-letter-logo-f69c3ca7-eb30-40f8-806d-45fbb183d56e.png" alt="Pitlane Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(225,6,0,0.3)] group-hover:drop-shadow-[0_0_15px_rgba(225,6,0,0.5)] transition-all" />
+            <img src="/obj/textures/logo.svg" alt="Pitlane Logo" className="h-6 object-contain drop-shadow-[0_0_10px_rgba(225,6,0,0.3)] group-hover:drop-shadow-[0_0_15px_rgba(225,6,0,0.5)] transition-all" />
             <div className="flex flex-col leading-none">
               <span className="text-[15px] font-black tracking-tight text-white uppercase">Pitlane</span>
-              <span className="text-[10px] font-mono text-on-surface-muted tracking-[0.15em]">2026 SEASON</span>
+              <span className="text-[10px] font-mono text-on-surface-muted tracking-[0.15em]">FORMULA 1</span>
             </div>
           </Link>
 
@@ -65,26 +55,34 @@ function Layout({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* ── Page Content ── */}
-      <main ref={containerRef} className="flex-1 w-full">
-        <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-8 md:py-10">
+      {isExperience ? (
+        <main ref={containerRef} className="flex-1 w-full relative">
           {children}
-        </div>
-      </main>
+        </main>
+      ) : (
+        <main ref={containerRef} className="flex-1 w-full">
+          <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-8 md:py-10">
+            {children}
+          </div>
+        </main>
+      )}
 
       {/* ── Footer ── */}
-      <footer className="border-t border-white/4 mt-auto">
-        <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <span className="text-xs font-mono text-on-surface-muted tracking-wider">
-            PITLANE © 2026 — F1 FAN COMPANION
-          </span>
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-mono text-on-surface-muted/60 flex items-center gap-1.5">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
-              100% SUSTAINABLE FUEL
+      {!isExperience && (
+        <footer className="border-t border-white/4 mt-auto">
+          <div className="max-w-[1400px] mx-auto px-5 md:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
+            <span className="text-xs font-mono text-on-surface-muted tracking-wider">
+              PITLANE © 2026 — F1 FAN COMPANION
             </span>
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] font-mono text-on-surface-muted/60 flex items-center gap-1.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+                100% SUSTAINABLE FUEL
+              </span>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

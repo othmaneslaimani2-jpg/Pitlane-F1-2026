@@ -1,4 +1,4 @@
-// @ts-expect-error
+
 import WebGLApp from '../webgl/App.jsx';
 
 export default function Experience() {
