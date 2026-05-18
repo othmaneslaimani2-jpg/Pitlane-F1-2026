@@ -1,5 +1,6 @@
 declare module '../webgl/App.jsx';
 declare module '*.jsx' {
-  const component: any;
+  const component: import('react').ComponentType<unknown>;
   export default component;
 }
+

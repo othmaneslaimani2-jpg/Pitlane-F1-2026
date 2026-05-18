@@ -3,15 +3,67 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.json';
-import { ArrowRight, Zap, Users, Fuel, Flag, Volume2, VolumeX } from 'lucide-react';
+import { ArrowRight, Zap, Users, Fuel, Flag, Volume2, VolumeX, Camera, Gamepad2 } from 'lucide-react';
 import { Link } from 'react-router';
+import { cn } from "@/lib/utils";
+import {
+  ContainerAnimated,
+  ContainerStagger
+} from '../components/ui/animated-gallery';
+import {
+  DraggableContainer,
+  GridBody,
+  GridItem
+} from '../components/ui/infinite-drag-scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HERO_VIDEO_URL = 'https://file.garden/aC_DHjCefTOrIs4s/pitlane.webm';
 const SPOTLIGHT_RADIUS = 140; // px — radius of the clear (non-blurred) circle
 
+const ALBUM_IMAGES_1 = [
+  "/Album/00faca8c91391b29c11ff5a51c5e86c6.jpg",
+  "/Album/145ee7aee8d2d5135c53247283b93e16.jpg",
+  "/Album/153f5957dd38fb61011c449042b9ef9f.jpg",
+  "/Album/17752c5ecc9a1cbc6c7a91033df1774f.jpg",
+  "/Album/1ae1bfc39c52b9f47fd45563eec1f068.jpg",
+  "/Album/39c1b8bb8ce8890bf6cbcf5127e42ee2.jpg",
+  "/Album/43b370b00155ba139048118c6e405d79.jpg",
+  "/Album/5014726effb322bde8573e967d9b235a.jpg",
+  "/Album/53e339929097a1ea712fe4bf88b58063.jpg",
+];
+
+const ALBUM_IMAGES_2 = [
+  "/Album/6b016811002735df8d26a2da6e65a26a.jpg",
+  "/Album/6b15c1719d1aa41fedfde48c81e405cd.jpg",
+  "/Album/721591650f5c2f79d7c224212532f078.jpg",
+  "/Album/788850931723da2a8133406e1fe449c6.jpg",
+  "/Album/7c9651b10b9e8587ef19d7513d5ca453.jpg",
+  "/Album/888e5480146d24eb005d4f395041d992.jpg",
+  "/Album/997f6ffade8abfff88785845d676844f.jpg",
+  "/Album/9e48903d390fb915b4dfb6625925dcae.jpg",
+  "/Album/9f32f0ed178ff54b928765dc19d24e8f.jpg",
+];
+
+const ALBUM_IMAGES_3 = [
+  "/Album/a1690e6228ef9cda37ebe73b8080dc48.jpg",
+  "/Album/b6013521f914353f0a86746a314fb265.jpg",
+  "/Album/bb11adc290c678f5b68005965bc9b32d.jpg",
+  "/Album/bbe759eea7cb64f9dc668b61aa18e50b.jpg",
+  "/Album/cdcb1b148564435bbaf75fd76a5647ed.jpg",
+  "/Album/e0d2d53d9206dc355997beba5445d7d1.jpg",
+  "/Album/e98fd4985dc853770845a6058968f0f3.jpg",
+  "/Album/f4473c5ddbc58b17af5c8313ecf02855.jpg",
+  "/Album/f6c8a3480cd1421e3ab48e082809bb1d.jpg",
+];
+const ALL_ALBUM_IMAGES = [
+  ...ALBUM_IMAGES_1.map((src, idx) => ({ id: idx + 1, src, alt: `F1 Image ${idx + 1}` })),
+  ...ALBUM_IMAGES_2.map((src, idx) => ({ id: idx + 10, src, alt: `F1 Image ${idx + 10}` })),
+  ...ALBUM_IMAGES_3.map((src, idx) => ({ id: idx + 19, src, alt: `F1 Image ${idx + 19}` }))
+];
+
 export default function Home() {
+  const [albumVariant, setAlbumVariant] = useState<'default' | 'masonry' | 'polaroid'>('masonry');
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const heroVideoWrapRef = useRef<HTMLDivElement>(null);
@@ -100,7 +152,8 @@ export default function Home() {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
     tl.from('.hero-badge', { y: -10, opacity: 0, duration: 0.4 })
       .from('.hero-title span', { y: 40, opacity: 0, stagger: 0.08, duration: 0.6 }, '-=0.2')
-      .from('.hero-sub', { y: 20, opacity: 0, duration: 0.5 }, '-=0.3');
+      .from('.hero-sub', { y: 20, opacity: 0, duration: 0.5 }, '-=0.3')
+      .from('.hero-cta', { y: 20, opacity: 0, duration: 0.5 }, '-=0.3');
 
     // Countdown card — scroll triggered
     gsap.from('.countdown-card', {
@@ -273,10 +326,19 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="hero-sub text-base md:text-lg text-white/70 max-w-xl leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)]">
+            <p className="hero-sub text-base md:text-lg text-white/70 max-w-xl leading-relaxed drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] mb-6">
               Your premium companion for the most revolutionary season in Formula 1 history.
               Track every race, build your garage, log your season.
             </p>
+            <div className="hero-cta pointer-events-auto">
+              <Link
+                to="/experience"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-black font-mono font-bold text-xs uppercase tracking-wider px-6 py-3.5 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/20 hover:shadow-primary/40 cursor-pointer"
+              >
+                <span>Launch 3D WebGL Experience</span>
+                <Gamepad2 size={14} className="animate-pulse" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -382,6 +444,109 @@ export default function Home() {
               <ArrowRight size={16} className="text-on-surface-muted/40 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ══════ ALBUM SECTION ══════ */}
+      <section className="relative overflow-hidden mt-12 mb-10">
+        <ContainerStagger className="relative z-10 px-6 pt-12 text-center flex flex-col items-center mb-8">
+          <ContainerAnimated>
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-4">
+              <Camera size={14} className="text-primary animate-pulse" />
+              <span className="text-[10px] font-mono text-primary tracking-[0.15em] uppercase">
+                Pitlane Moments
+              </span>
+            </div>
+          </ContainerAnimated>
+          <ContainerAnimated>
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white mb-2">
+              Season <span className="bg-linear-to-r from-primary to-primary-soft bg-clip-text text-transparent">Album</span>
+            </h2>
+          </ContainerAnimated>
+          <ContainerAnimated>
+            <p className="text-sm text-on-surface-muted max-w-xl leading-relaxed mb-6">
+              Experience the intensity, speed, and drama of the 2026 Season through our lens. Hover and scroll or drag the grid infinitely to explore.
+            </p>
+          </ContainerAnimated>
+
+          {/* Segmented Cockpit Viewport Variant Selector */}
+          <ContainerAnimated>
+            <div className="inline-flex bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 shadow-2xl">
+              {(['default', 'masonry', 'polaroid'] as const).map((variant) => (
+                <button
+                  key={variant}
+                  onClick={() => setAlbumVariant(variant)}
+                  className={cn(
+                    "px-5 py-2 text-xs font-mono font-bold uppercase tracking-wider rounded-lg transition-all duration-300 cursor-pointer",
+                    albumVariant === variant
+                      ? "bg-primary text-black shadow-lg shadow-primary/20 scale-105 font-black"
+                      : "text-on-surface-muted hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {variant}
+                </button>
+              ))}
+            </div>
+          </ContainerAnimated>
+        </ContainerStagger>
+
+        {/* Ambient background glow matching the F1 premium aesthetic */}
+        <div 
+          className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-0 z-0 h-[600px] w-[800px] opacity-15"
+          style={{
+            background: "radial-gradient(circle, var(--color-primary) 0%, transparent 70%)",
+            filter: "blur(90px)",
+            mixBlendMode: "screen",
+          }}
+        />
+
+        {/* Fullscreen Draggable Gallery Frame */}
+        <div className="relative w-full h-[65vh] md:h-[75vh] rounded-2xl overflow-hidden border border-white/5 bg-surface-base/80 shadow-3xl">
+          {/* High-tech UI overlay frames */}
+          <div className="absolute top-4 left-4 z-10 pointer-events-none flex flex-col gap-1 font-mono text-[9px] md:text-[10px] text-primary/70">
+            <span>GRID_STATUS: ACTIVE</span>
+            <span>LAYOUT: {albumVariant.toUpperCase()}</span>
+          </div>
+          <div className="absolute bottom-4 right-4 z-10 pointer-events-none font-mono text-[9px] md:text-[10px] text-on-surface-muted/50 uppercase tracking-wider">
+            DRAG TO PAN CANVAS • WHEEL SCROLL TO ZOOM/SLIDE
+          </div>
+
+          <DraggableContainer variant={albumVariant} className="gap-8 p-4">
+            <GridBody>
+              {ALL_ALBUM_IMAGES.map((img) => (
+                <GridItem key={img.id} className="relative w-[150px] h-[200px] md:w-[260px] md:h-[340px] flex items-center justify-center">
+                  {albumVariant === 'polaroid' ? (
+                    <div className="w-full h-full p-2 bg-white text-black shadow-2xl flex flex-col justify-between select-none">
+                      <div className="w-full h-[84%] overflow-hidden bg-neutral-900">
+                        <img
+                          src={img.src}
+                          alt={img.alt}
+                          className="w-full h-full object-cover pointer-events-none"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="h-[16%] flex items-center justify-center font-mono text-[8px] md:text-[10px] font-bold text-neutral-800 tracking-wider">
+                        PITLANE_2026 // #{img.id.toString().padStart(2, '0')}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="group relative w-full h-full overflow-hidden rounded-xl border border-white/10 bg-neutral-950/40 backdrop-blur-xs shadow-lg transition-all duration-300 select-none">
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 pointer-events-none"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                        <span className="text-[10px] font-mono text-primary tracking-widest uppercase">FRAME #{img.id.toString().padStart(2, '0')}</span>
+                        <h4 className="text-xs font-bold text-white uppercase tracking-tight mt-0.5">{img.alt}</h4>
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+              ))}
+            </GridBody>
+          </DraggableContainer>
         </div>
       </section>
     </div>
